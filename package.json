@@ -1,0 +1,33 @@
+{
+  "name": "minhaloja",
+  "version": "1.0.0",
+  "description": "a simple e-commerce",
+  "main": "server.js",
+  "scripts": {
+    "client-install": "npm install --prefix client",
+    "server": "nodemon server.js",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GuiFSs/minhaloja.git"
+  },
+  "author": "GuiFSs",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/GuiFSs/minhaloja/issues"
+  },
+  "homepage": "https://github.com/GuiFSs/minhaloja#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.3",
+    "concurrently": "^3.6.1",
+    "express": "^4.16.3",
+    "jsonwebtoken": "^8.3.0",
+    "mongoose": "^5.2.7",
+    "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0",
+    "validator": "^10.5.0"
+  }
+}

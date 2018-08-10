@@ -1,0 +1,37 @@
+@media screen and (min-width: 970px),
+  screen and (min-width: 810px) and (max-width: 882px) {
+  .search-item {
+    width: 400px;
+  }
+}
+
+@media screen and (max-width: 969px) and (min-width: 883px) {
+  .search-item {
+    width: 500px;
+  }
+}
+@media screen and (max-width: 670px) and (min-width: 550px) {
+  .search-item {
+    width: 500px;
+  }
+}
+@media screen and (max-width: 549px) and (min-width: 448px) {
+  .search-item {
+    width: 400px;
+  }
+}
+@media screen and (max-width: 447px) and (min-width: 393px) {
+  .search-item {
+    width: 300px;
+  }
+}
+@media screen and (max-width: 392px) and (min-width: 345px) {
+  .search-item {
+    width: 180px;
+  }
+}
+@media screen and (max-width: 344px) {
+  .search-item {
+    width: 100px;
+  }
+}

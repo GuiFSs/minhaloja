@@ -1,0 +1,14 @@
+/* For demo */
+.ant-carousel .slick-slide {
+  text-align: center;
+  width: 100%;
+  line-height: 160px;
+  overflow: hidden;
+}
+
+.slick-dots li {
+  background-color: #e95353;
+}
+.ant-carousel .slick-dots li.slick-active button {
+  background-color: #ed0000;
+}

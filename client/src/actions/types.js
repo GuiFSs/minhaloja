@@ -1,0 +1,7 @@
+const types = {
+  GET_ALL_PRODUTOS: 'GET_ALL_PRODUTOS',
+  GET_ONE_PRODUTO: 'GET_ONE_PRODUTO',
+  SET_PRODUTOS_LOADING: 'SET_PRODUTOS_LOADING'
+};
+
+export default types;

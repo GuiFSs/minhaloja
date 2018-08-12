@@ -8,6 +8,13 @@ const initialState = {
 
 const produtosReducer = (state = initialState, action) => {
   switch (action.type) {
+    case types.GET_ONE_PRODUTO:
+      return {
+        ...state,
+        produto: action.payload,
+        loading: false,
+        produtos: []
+      };
     case types.GET_ALL_PRODUTOS:
       return {
         ...state,

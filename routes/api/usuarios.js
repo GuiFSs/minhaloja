@@ -33,7 +33,7 @@ router.post('/cadastro', async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     newUsuario.senha = await bcrypt.hash(newUsuario.senha, salt);
     await newUsuario.save();
-
+    newUsuario.senha = '';
     res.status(201).json(newUsuario);
   } catch (err) {
     res.status(400).json(err);

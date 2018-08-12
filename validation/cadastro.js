@@ -9,8 +9,8 @@ module.exports = function validarCadastroInput(data) {
   data.senha = !isEmpty(data.senha) ? data.senha : '';
   data.senha2 = !isEmpty(data.senha2) ? data.senha2 : '';
 
-  if (!Validator.isLength(data.nome, { min: 2, max: 30 })) {
-    errors.nome = 'Name must be between 2 and 30 characters';
+  if (!Validator.isLength(data.nome, { min: 3, max: 30 })) {
+    errors.nome = 'Name must be between 3 and 30 characters';
   }
   if (Validator.isEmpty(data.nome)) {
     errors.nome = 'Name field is required';

@@ -25,7 +25,7 @@ class Cadastro extends React.Component {
 
   compareToFirstPassword = (rule, value, callback) => {
     const form = this.props.form;
-    if (value && value !== form.getFieldValue('password')) {
+    if (value && value !== form.getFieldValue('senha')) {
       callback('Campos devem ser iguais!');
     } else {
       callback();
@@ -38,18 +38,6 @@ class Cadastro extends React.Component {
       form.validateFields(['confirm'], { force: true });
     }
     callback();
-  };
-
-  handleWebsiteChange = value => {
-    let autoCompleteResult;
-    if (!value) {
-      autoCompleteResult = [];
-    } else {
-      autoCompleteResult = ['.com', '.org', '.net'].map(
-        domain => `${value}${domain}`
-      );
-    }
-    this.setState({ autoCompleteResult });
   };
 
   render() {
@@ -80,13 +68,27 @@ class Cadastro extends React.Component {
 
     return (
       <Row>
-        <Col xs={{ span: 24, offset: 0 }} md={{ span: 12, offset: 4 }}>
+        <Col sm={{ span: 24, offset: 0 }} md={{ span: 16, offset: 4 }}>
           <Form
             style={{ margin: 'auto', marginTop: '50px', padding: '35px' }}
             onSubmit={this.handleSubmit}
             className="login-form"
           >
-            {/* <Form onSubmit={this.handleSubmit}> */}
+            <FormItem {...formItemLayout} label="Nome:">
+              {getFieldDecorator('nome', {
+                rules: [
+                  {
+                    required: true,
+                    message: 'Por favor digite seu nome'
+                  },
+                  {
+                    min: 3,
+                    max: 30,
+                    message: 'Nome deve ter entre 6 e 30 caracteres'
+                  }
+                ]
+              })(<Input name="nome" placeholder="Ex: Brenão" />)}
+            </FormItem>
             <FormItem {...formItemLayout} label="E-mail: ">
               {getFieldDecorator('email', {
                 rules: [
@@ -99,10 +101,12 @@ class Cadastro extends React.Component {
                     message: 'Por favor preencha o seu E-mail!'
                   }
                 ]
-              })(<Input placeholder="Ex: gilsonnunes@gmail.com" />)}
+              })(
+                <Input name="email" placeholder="Ex: gilsonnunes@gmail.com" />
+              )}
             </FormItem>
             <FormItem {...formItemLayout} label="Senha: ">
-              {getFieldDecorator('password', {
+              {getFieldDecorator('senha', {
                 rules: [
                   {
                     required: true,
@@ -117,10 +121,10 @@ class Cadastro extends React.Component {
                     message: 'Senha deve ter entre 6 e 30 caracteres'
                   }
                 ]
-              })(<Input type="password" />)}
+              })(<Input name="senha" type="password" />)}
             </FormItem>
-            <FormItem {...formItemLayout} label="Confirmar Senha: ">
-              {getFieldDecorator('confirm', {
+            <FormItem {...formItemLayout} label="Confirmar Senha">
+              {getFieldDecorator('senha2', {
                 rules: [
                   {
                     required: true,
@@ -130,11 +134,22 @@ class Cadastro extends React.Component {
                     validator: this.compareToFirstPassword
                   }
                 ]
-              })(<Input type="password" onBlur={this.handleConfirmBlur} />)}
+              })(
+                <Input
+                  name="senha2"
+                  type="password"
+                  onBlur={this.handleConfirmBlur}
+                />
+              )}
             </FormItem>
+            {/* TODO: adicionar mais campos, e.g: telefone, endereco */}
             <FormItem {...tailFormItemLayout}>
-              <Button type="primary" htmlType="submit">
-                Criar seu Cadastro
+              <Button
+                style={{ width: '100%' }}
+                type="primary"
+                htmlType="submit"
+              >
+                Cadastrar
               </Button>
             </FormItem>
           </Form>

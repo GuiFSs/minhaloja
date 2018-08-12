@@ -54,7 +54,7 @@ router.get('/todos/:categoria', async (req, res) => {
  */
 router.get('/:id', async (req, res) => {
   try {
-    const produto = await Produto.find({ _id: req.params.id }).exec();
+    const produto = await Produto.findById({ _id: req.params.id }).exec();
     if (!produto) {
       res.status(404).json({ produto: 'Produto não encontrado' });
     }

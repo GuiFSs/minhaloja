@@ -1,47 +1,73 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import FeedProdutos from './feedProdutos/FeedProdutos';
+import { getAllProdutos, getProdutosByCategoria } from '../../actions/produtos';
+import Spinner from '../layout/Spinner';
+
 import { Layout } from 'antd';
-
-import { produtos } from '../content/feedProdutos/dummyData';
-
+import objectEquals from '../../utils/objectEquals';
 const { Content } = Layout;
 
-export default class MyContent extends Component {
+class MyContent extends Component {
   state = {
-    produtos: [],
-    currentParams: ''
+    test: 'oi'
   };
+  // componentDidMount() {
+  //   this.comparePathAndUpdateProdutos();
+  // }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    let newProdutos = [];
-    produtos.map(produto => {
-      if (produto.categoriaId === nextProps.match.params.categoriaId) {
-        newProdutos.push(produto);
-      }
-      return produto;
-    });
-    return { produtos: newProdutos };
-  }
+  // static getDerivedStateFromProps(props, state)
 
-  getContentFromParams = params => {
-    let response = [];
-    produtos.map(produto => {
-      if (produto.categoriaId === params.categoriaId) {
-        response.push(produto);
-      }
-      return produto;
-    });
-    return response;
+  comparePathAndUpdateProdutos = () => {
+    const { path, params } = this.props.match;
+    if (path === '/') {
+      this.props.getAllProdutos();
+    } else if (path === '/categoria/:nome') {
+      this.props.getProdutosByCategoria(params.nome);
+    }
   };
 
   componentDidMount() {
-    this.setState({
-      produtos: this.getContentFromParams(this.props.match.params)
-    });
+    this.comparePathAndUpdateProdutos();
   }
 
+  // shouldComponentUpdate(nextProps) {
+  //   return (
+  //     !objectEquals(
+  //       nextProps.produtos.produtos,
+  //       this.props.produtos.produtos
+  //     ) && nextProps.produtos.produtos.length !== 0
+  //   );
+  // }
+
+  produtoClicked = (produtoId, nomeProduto) => {
+    this.props.history.push(`/produto/${produtoId}/${nomeProduto}`);
+  };
+
+  formatarPreco = preco => {
+    return preco
+      .toFixed(2)
+      .toString()
+      .split('.')
+      .join(',');
+  };
+
+  formatarParcela = (preco, parcelas) => {
+    return `${parcelas}x de R$ ${this.formatarPreco(preco / parcelas)}`;
+  };
+
   render() {
-    const { produtos } = this.state;
+    const { produtos, loading } = this.props.produtos;
+    let feed = loading ? (
+      <Spinner />
+    ) : (
+      <FeedProdutos
+        produtos={produtos}
+        formatarParcela={this.formatarParcela}
+        formatarPreco={this.formatarPreco}
+        produtoClicked={this.produtoClicked}
+      />
+    );
     return (
       <Content
         style={{
@@ -51,8 +77,17 @@ export default class MyContent extends Component {
           minHeight: 280
         }}
       >
-        <FeedProdutos produtos={produtos} />
+        {feed}
       </Content>
     );
   }
 }
+
+const mapStateToProps = state => ({
+  produtos: state.produtos
+});
+
+export default connect(
+  mapStateToProps,
+  { getAllProdutos, getProdutosByCategoria }
+)(MyContent);

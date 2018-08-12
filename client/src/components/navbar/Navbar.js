@@ -3,17 +3,21 @@ import React, { Component } from 'react';
 import { Layout, Breadcrumb, Affix } from 'antd';
 import MyHeader from './header/MyHeader';
 import SideDrawer from './listaDepartamento/SideDrawer';
+import { connect } from 'react-redux';
+
+import { getAllCategorias } from '../../actions/categorias';
+import { getProdutosByCategoria } from '../../actions/produtos';
 
 class Navbar extends Component {
   state = {
     visible: false,
-    width: window.innerWidth,
-    loginModalOpen: false
+    width: window.innerWidth
   };
 
   componentDidMount() {
     this.updateWindowDimensions();
     window.addEventListener('resize', this.updateWindowDimensions);
+    this.props.getAllCategorias();
   }
 
   componentWillUnmount() {
@@ -25,6 +29,11 @@ class Navbar extends Component {
   };
 
   handleDrawer = () => {
+    this.setState(prevState => ({ visible: !prevState.visible }));
+  };
+
+  handleDrawerAndFetchProdutos = categoriaNome => {
+    this.props.getProdutosByCategoria(categoriaNome);
     this.setState(prevState => ({ visible: !prevState.visible }));
   };
 
@@ -42,6 +51,7 @@ class Navbar extends Component {
 
   render() {
     const { width } = this.state;
+    const { categorias } = this.props.categorias;
     let myHeaderContent = (
       <MyHeader
         cartClick={this.handleCartClick}
@@ -70,8 +80,9 @@ class Navbar extends Component {
       <Layout>
         {myHeaderContent}
         <SideDrawer
+          categorias={categorias}
           onClose={this.handleDrawer}
-          onMenuItemClick={this.handleDrawer}
+          onMenuItemClick={this.handleDrawerAndFetchProdutos}
           visible={this.state.visible}
         />
         <Layout style={{ padding: '0 24px 5px' }}>
@@ -86,4 +97,11 @@ class Navbar extends Component {
   }
 }
 
-export default Navbar;
+const mapStateToProps = state => ({
+  categorias: state.categorias
+});
+
+export default connect(
+  mapStateToProps,
+  { getAllCategorias, getProdutosByCategoria }
+)(Navbar);

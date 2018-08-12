@@ -1,12 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-
 import { Drawer, Menu } from 'antd';
 
-import { categorias } from './dummyCategorias';
-
-const SideDrawer = ({ onClose, visible, onMenuItemClick }) => {
+const SideDrawer = ({ onClose, visible, onMenuItemClick, categorias }) => {
   return (
     <Drawer
       title="Compre Por Departamento"
@@ -24,14 +21,21 @@ const SideDrawer = ({ onClose, visible, onMenuItemClick }) => {
         }}
         mode="inline"
       >
-        {categorias.map(categoria => (
-          <Menu.Item onClick={onMenuItemClick} key={categoria.id}>
-            {/* TODO: trocar o categoria.id por categoria.nameLink()  */}
-            <Link to={`/categoria/${categoria.id}`}>
-              <span>{categoria.name}</span>
-            </Link>
-          </Menu.Item>
-        ))}
+        {categorias
+          ? categorias.map(categoria => (
+              <Menu.Item
+                onClick={() => onMenuItemClick(categoria.nome)}
+                key={categoria._id}
+              >
+                {/* TODO: trocar o categoria.id por categoria.nameLink()  */}
+                <Link to={`/categoria/${categoria.nome.split(' ').join('-')}`}>
+                  <span onClick={() => console.log('item clicked')}>
+                    {categoria.nome}
+                  </span>
+                </Link>
+              </Menu.Item>
+            ))
+          : null}
       </Menu>
     </Drawer>
   );
@@ -39,7 +43,8 @@ const SideDrawer = ({ onClose, visible, onMenuItemClick }) => {
 
 SideDrawer.propTypes = {
   visible: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired
+  onClose: PropTypes.func.isRequired,
+  categorias: PropTypes.array.isRequired
 };
 
 export default SideDrawer;

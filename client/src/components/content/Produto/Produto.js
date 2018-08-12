@@ -1,45 +1,31 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 // import PropTypes from 'prop-types';
-
+import { Row, Col, Rate, Carousel, Icon, Divider, Button } from 'antd';
 import './Produto.css';
 
-import { Row, Col, Rate, Carousel, Icon, Divider, Button } from 'antd';
-
-import { produtos } from '../feedProdutos/dummyData';
+import { getOneProduto } from '../../../actions/produtos';
+import Spinner from '../../layout/Spinner';
 
 class Produto extends Component {
   state = {
-    produto: {},
-    iconFaceRate: ''
+    iconFaceRate: '',
+    mediaEstrelas: 0
   };
 
-  componentDidMount() {
-    const produto = this.getQueryParams(this.props.match.params);
+  async componentDidMount() {
+    await this.props.getOneProduto(this.props.match.params.produtoId);
+    const { mediaEstrelas } = this.props.produtos.produto.avaliacao;
     this.setState({
-      produto,
-      iconFaceRate: this.changeRateIcon(produto.valorRate)
+      iconFaceRate: this.changeRateIcon(mediaEstrelas),
+      mediaEstrelas: mediaEstrelas
     });
   }
 
-  getQueryParams = params => {
-    let response = {};
-    produtos.map(item => {
-      if (item.categoriaId.toString() === params.categoriaId) {
-        if (item.produtoId.toString() === params.produtoId) {
-          response = { ...item };
-        }
-      }
-      return item;
-    });
-    return response;
-  };
-
   // set the valorRate when clicked
   handleRateChange = value => {
-    const { produto } = this.state;
-    produto.valorRate = value;
     const icon = this.changeRateIcon(value);
-    this.setState({ produto, iconFaceRate: icon });
+    this.setState({ mediaEstrelas: value, iconFaceRate: icon });
   };
 
   handleRateHover = value => {
@@ -49,7 +35,7 @@ class Produto extends Component {
   };
 
   handleRateMouseOut = () => {
-    const icon = this.changeRateIcon(this.state.produto.valorRate);
+    const icon = this.changeRateIcon(this.state.mediaEstrelas);
     this.setState({ iconFaceRate: icon });
   };
 
@@ -61,73 +47,100 @@ class Produto extends Component {
     return icon;
   };
 
+  formatarPreco = preco => {
+    return preco
+      .toFixed(2)
+      .toString()
+      .split('.')
+      .join(',');
+  };
+
+  formatarParcela = (preco, parcelas) => {
+    return `${parcelas}x de R$ ${this.formatarPreco(preco / parcelas)}`;
+  };
+
   handleComprar = e => {
     e.preventDefault();
     this.props.history.push('/carrinho/esse-e-para-ser-meu-carrinhoId');
   };
 
   render() {
-    const { produto, iconFaceRate } = this.state;
+    const { iconFaceRate } = this.state;
+    const { produto, loading } = this.props.produtos;
+
     return (
       <div style={{ padding: '25px' }}>
-        <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32, xl: 40 }}>
-          <Col sm={24} md={14}>
-            <Carousel autoplaySpeed={5000} autoplay={true} arrows={true}>
-              {produto.imagens
-                ? produto.imagens.map((imagem, index) => (
-                    <div key={index}>
-                      <img
-                        style={{
-                          display: 'block',
-                          margin: 'auto'
-                        }}
-                        src={imagem}
-                        alt={produto.produto}
-                      />
-                    </div>
-                  ))
-                : null}
-            </Carousel>
-          </Col>
-          <Col style={{ marginTop: '60px' }} sm={24} md={10}>
-            <h1>{produto.produto}</h1>
-            <small>Cód. do Produto: {produto.produtoId}</small>
-            <br />
-            <div onMouseOut={this.handleRateMouseOut}>
-              Avalie o Produto:{' '}
-              <Rate
-                allowClear={false}
-                onChange={this.handleRateChange}
-                onHoverChange={this.handleRateHover}
-                on
-                style={{ fontSize: '15px' }}
-                allowHalf
-                value={produto.valorRate}
-              />
-              <Icon style={{ fontSize: '20px' }} type={iconFaceRate} />
-            </div>
-            <Divider />
-            <h1 style={{ textAlign: 'center' }}>
-              R${' '}
-              {produto.valor
-                ? produto.valor
-                    .toString()
-                    .split('.')
-                    .join(',')
-                : null}
-            </h1>
-            <Button
-              onClick={this.handleComprar}
-              style={{ width: '100%' }}
-              type="primary"
-            >
-              comprar
-            </Button>
-          </Col>
-        </Row>
+        {loading ? (
+          <Spinner />
+        ) : (
+          <Row>
+            <Col style={{ maxHeight: '500px' }} sm={24} md={12}>
+              <Carousel autoplaySpeed={5000} autoplay={true} arrows={true}>
+                {produto.imagens
+                  ? produto.imagens.map((imagem, index) => (
+                      <div key={index}>
+                        <img
+                          style={{
+                            display: 'block',
+                            margin: 'auto',
+                            width: '70%'
+                          }}
+                          src={imagem}
+                          alt={produto.nome}
+                        />
+                      </div>
+                    ))
+                  : null}
+              </Carousel>
+            </Col>
+            <Col style={{ marginTop: '60px' }} sm={24} md={12}>
+              <h1>{produto.nome}</h1>
+              <small>Cód. do Produto: {produto._id}</small>
+              <br />
+              <div onMouseOut={this.handleRateMouseOut}>
+                Avalie o Produto:{' '}
+                <Rate
+                  allowClear={false}
+                  onChange={this.handleRateChange}
+                  onHoverChange={this.handleRateHover}
+                  on
+                  style={{ fontSize: '15px' }}
+                  allowHalf
+                  value={
+                    produto.avaliacao ? produto.avaliacao.mediaEstrelas : null
+                  }
+                />
+                <small>
+                  ({produto.avaliacao ? produto.avaliacao.numAvaliacoes : null})
+                </small>{' '}
+                <Icon style={{ fontSize: '20px' }} type={iconFaceRate} />
+              </div>
+              <Divider />
+              <h1 style={{ textAlign: 'center' }}>
+                R$ {produto.preco ? this.formatarPreco(produto.preco) : null}
+              </h1>
+              <div style={{ textAlign: 'center' }}>
+                <Button
+                  style={{ width: '70%' }}
+                  onClick={this.handleComprar}
+                  type="primary"
+                >
+                  comprar
+                </Button>
+              </div>
+            </Col>
+          </Row>
+        )}
       </div>
     );
   }
 }
 
-export default Produto;
+const mapStateToProps = state => ({
+  produtos: state.produtos
+});
+
+export default connect(
+  mapStateToProps,
+  { getOneProduto }
+)(Produto);

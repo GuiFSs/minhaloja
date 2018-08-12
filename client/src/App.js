@@ -9,17 +9,28 @@ import Produto from './components/content/Produto/Produto';
 import MyFooter from './components/footer/MyFooter';
 import Carrinho from './components/carrinho/Carrinho';
 
+import jwt_decode from 'jwt-decode';
+import store from './store';
+import { setUsuarioAtual } from './actions/autenticacao';
+
 class App extends Component {
+  componentDidMount() {
+    if (localStorage.getItem('jwtToken')) {
+      const token = localStorage.getItem('jwtToken');
+      const decoded = jwt_decode(token);
+      store.dispatch(setUsuarioAtual(decoded));
+    }
+  }
   render() {
     return (
       <div className="App">
         <Route path="/" component={Navbar} />
         <Route
           exact
-          path="/produto/:categoriaId/:produtoId"
+          path="/produto/:produtoId/:produtoNome"
           component={Produto}
         />
-        <Route exact path="/categoria/:categoriaId" component={MyContent} />
+        <Route exact path="/categoria/:nome" component={MyContent} />
         <Route exact path="/carrinho/:carrinhoId" component={Carrinho} />
         <Route exact path="/" component={MyContent} />
         <Route exact path="/login" component={Login} />

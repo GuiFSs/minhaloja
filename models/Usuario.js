@@ -28,7 +28,8 @@ const UsuarioSchema = new Schema({
     default: []
   },
   telefone: {
-    type: String
+    type: Array,
+    default: []
   }
 });
 

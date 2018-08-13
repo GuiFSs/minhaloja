@@ -31,7 +31,7 @@ class App extends Component {
           component={Produto}
         />
         <Route exact path="/categoria/:nome" component={MyContent} />
-        <Route exact path="/carrinho/:carrinhoId" component={Carrinho} />
+        <Route exact path="/carrinho" component={Carrinho} />
         <Route exact path="/" component={MyContent} />
         <Route exact path="/login" component={Login} />
         <Route exact path="/cadastro" component={Cadastro} />

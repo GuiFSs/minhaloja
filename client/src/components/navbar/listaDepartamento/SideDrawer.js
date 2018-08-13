@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Drawer, Menu } from 'antd';
+import { formatLink } from '../../../utils/format';
 
 const SideDrawer = ({ onClose, visible, onMenuItemClick, categorias }) => {
   return (
@@ -27,11 +28,8 @@ const SideDrawer = ({ onClose, visible, onMenuItemClick, categorias }) => {
                 onClick={() => onMenuItemClick(categoria.nome)}
                 key={categoria._id}
               >
-                {/* TODO: trocar o categoria.id por categoria.nameLink()  */}
-                <Link to={`/categoria/${categoria.nome.split(' ').join('-')}`}>
-                  <span onClick={() => console.log('item clicked')}>
-                    {categoria.nome}
-                  </span>
+                <Link to={`/categoria/${formatLink(categoria.nome)}`}>
+                  <span>{categoria.nome}</span>
                 </Link>
               </Menu.Item>
             ))

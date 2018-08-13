@@ -1,12 +1,8 @@
 import React from 'react';
 import { Card, Row, Col, Rate } from 'antd';
+import { formatParcela, formatPreco } from '../../../utils/format';
 
-const FeedProdutos = ({
-  produtos,
-  formatarParcela,
-  formatarPreco,
-  produtoClicked
-}) => {
+const FeedProdutos = ({ produtos, produtoClicked }) => {
   return (
     <div>
       <Row gutter={{ xs: 8 }}>
@@ -45,10 +41,10 @@ const FeedProdutos = ({
               />
               <small>({produto.avaliacao.numAvaliacoes})</small>
               <h2 style={{ marginBottom: '5px' }}>
-                R$ {formatarPreco(produto.preco)}
+                R$ {formatPreco(produto.preco)}
               </h2>
               <span style={{ fontSize: '12px' }}>
-                {formatarParcela(produto.preco, 8)}
+                {formatParcela(produto.preco, 8)}
               </span>
             </Card>
           </Col>

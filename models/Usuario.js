@@ -17,12 +17,6 @@ const UsuarioSchema = new Schema({
   endereco: {
     type: Object
   },
-  carrinho: {
-    type: Object,
-    default: {
-      produtos: []
-    }
-  },
   meusPedidos: {
     type: Array,
     default: []

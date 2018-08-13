@@ -3,27 +3,18 @@ import { connect } from 'react-redux';
 import FeedProdutos from './feedProdutos/FeedProdutos';
 import { getAllProdutos, getProdutosByCategoria } from '../../actions/produtos';
 import Spinner from '../layout/Spinner';
+import { deformLink } from '../../utils/format';
 
 import { Layout } from 'antd';
-import objectEquals from '../../utils/objectEquals';
 const { Content } = Layout;
 
 class MyContent extends Component {
-  state = {
-    test: 'oi'
-  };
-  // componentDidMount() {
-  //   this.comparePathAndUpdateProdutos();
-  // }
-
-  // static getDerivedStateFromProps(props, state)
-
   comparePathAndUpdateProdutos = () => {
     const { path, params } = this.props.match;
     if (path === '/') {
       this.props.getAllProdutos();
     } else if (path === '/categoria/:nome') {
-      this.props.getProdutosByCategoria(params.nome);
+      this.props.getProdutosByCategoria(deformLink(params.nome));
     }
   };
 
@@ -31,29 +22,14 @@ class MyContent extends Component {
     this.comparePathAndUpdateProdutos();
   }
 
-  // shouldComponentUpdate(nextProps) {
-  //   return (
-  //     !objectEquals(
-  //       nextProps.produtos.produtos,
-  //       this.props.produtos.produtos
-  //     ) && nextProps.produtos.produtos.length !== 0
-  //   );
-  // }
+  componentDidUpdate(nextProps) {
+    if (this.props.match.url !== nextProps.match.url) {
+      this.comparePathAndUpdateProdutos();
+    }
+  }
 
   produtoClicked = (produtoId, nomeProduto) => {
     this.props.history.push(`/produto/${produtoId}/${nomeProduto}`);
-  };
-
-  formatarPreco = preco => {
-    return preco
-      .toFixed(2)
-      .toString()
-      .split('.')
-      .join(',');
-  };
-
-  formatarParcela = (preco, parcelas) => {
-    return `${parcelas}x de R$ ${this.formatarPreco(preco / parcelas)}`;
   };
 
   render() {
@@ -61,12 +37,7 @@ class MyContent extends Component {
     let feed = loading ? (
       <Spinner />
     ) : (
-      <FeedProdutos
-        produtos={produtos}
-        formatarParcela={this.formatarParcela}
-        formatarPreco={this.formatarPreco}
-        produtoClicked={this.produtoClicked}
-      />
+      <FeedProdutos produtos={produtos} produtoClicked={this.produtoClicked} />
     );
     return (
       <Content

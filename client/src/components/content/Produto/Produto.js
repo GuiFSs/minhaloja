@@ -5,7 +5,9 @@ import { Row, Col, Rate, Carousel, Icon, Divider, Button } from 'antd';
 import './Produto.css';
 
 import { getOneProduto } from '../../../actions/produtos';
+import { addProdutoToCart } from '../../../actions/carrinho';
 import Spinner from '../../layout/Spinner';
+import { formatPreco, formatParcela } from '../../../utils/format';
 
 class Produto extends Component {
   state = {
@@ -22,7 +24,6 @@ class Produto extends Component {
     });
   }
 
-  // set the valorRate when clicked
   handleRateChange = value => {
     const icon = this.changeRateIcon(value);
     this.setState({ mediaEstrelas: value, iconFaceRate: icon });
@@ -35,6 +36,8 @@ class Produto extends Component {
   };
 
   handleRateMouseOut = () => {
+    console.log('saiu');
+
     const icon = this.changeRateIcon(this.state.mediaEstrelas);
     this.setState({ iconFaceRate: icon });
   };
@@ -47,21 +50,10 @@ class Produto extends Component {
     return icon;
   };
 
-  formatarPreco = preco => {
-    return preco
-      .toFixed(2)
-      .toString()
-      .split('.')
-      .join(',');
-  };
-
-  formatarParcela = (preco, parcelas) => {
-    return `${parcelas}x de R$ ${this.formatarPreco(preco / parcelas)}`;
-  };
-
-  handleComprar = e => {
+  handleComprar = (e, id) => {
     e.preventDefault();
-    this.props.history.push('/carrinho/esse-e-para-ser-meu-carrinhoId');
+    this.props.addProdutoToCart(id);
+    this.props.history.push('/carrinho');
   };
 
   render() {
@@ -116,16 +108,20 @@ class Produto extends Component {
                 <Icon style={{ fontSize: '20px' }} type={iconFaceRate} />
               </div>
               <Divider />
-              <h1 style={{ textAlign: 'center' }}>
-                R$ {produto.preco ? this.formatarPreco(produto.preco) : null}
-              </h1>
+              <div style={{ textAlign: 'center' }}>
+                <h1 style={{ marginBottom: '-5px' }}>
+                  R$ {produto.preco ? formatPreco(produto.preco) : null}
+                </h1>
+                <span>{formatParcela(produto.preco, 8)}</span>
+              </div>
+              <br />
               <div style={{ textAlign: 'center' }}>
                 <Button
                   style={{ width: '70%' }}
-                  onClick={this.handleComprar}
+                  onClick={e => this.handleComprar(e, produto._id)}
                   type="primary"
                 >
-                  comprar
+                  Comprar
                 </Button>
               </div>
             </Col>
@@ -142,5 +138,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getOneProduto }
+  { getOneProduto, addProdutoToCart }
 )(Produto);

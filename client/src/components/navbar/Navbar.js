@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-
 import { Layout, Breadcrumb, Affix } from 'antd';
 import MyHeader from './header/MyHeader';
 import SideDrawer from './listaDepartamento/SideDrawer';
@@ -7,7 +6,6 @@ import { connect } from 'react-redux';
 
 import { getAllCategorias } from '../../actions/categorias';
 import { getProdutosByCategoria } from '../../actions/produtos';
-
 class Navbar extends Component {
   state = {
     visible: false,
@@ -32,21 +30,8 @@ class Navbar extends Component {
     this.setState(prevState => ({ visible: !prevState.visible }));
   };
 
-  handleDrawerAndFetchProdutos = categoriaNome => {
-    this.props.getProdutosByCategoria(categoriaNome);
-    this.setState(prevState => ({ visible: !prevState.visible }));
-  };
-
-  handleUserClick = () => {
-    this.props.history.push('/login');
-  };
-
-  handleLogoClick = () => {
-    this.props.history.push('/');
-  };
-
-  handleCartClick = () => {
-    this.props.history.push('/carrinho/esse-e-para-ser-meu-carrinhoId');
+  handleLinkClick = link => {
+    this.props.history.push(link);
   };
 
   render() {
@@ -54,9 +39,11 @@ class Navbar extends Component {
     const { categorias } = this.props.categorias;
     let myHeaderContent = (
       <MyHeader
-        cartClick={this.handleCartClick}
-        logoClick={this.handleLogoClick}
-        userClick={this.handleUserClick}
+        cartClick={() =>
+          this.handleLinkClick('/carrinho/esse-e-para-ser-meu-carrinhoId')
+        }
+        logoClick={() => this.handleLinkClick('/')}
+        userClick={() => this.handleLinkClick('/login')}
         clickDrawer={this.handleDrawer}
         width={width}
       />
@@ -82,7 +69,7 @@ class Navbar extends Component {
         <SideDrawer
           categorias={categorias}
           onClose={this.handleDrawer}
-          onMenuItemClick={this.handleDrawerAndFetchProdutos}
+          onMenuItemClick={this.handleDrawer}
           visible={this.state.visible}
         />
         <Layout style={{ padding: '0 24px 5px' }}>

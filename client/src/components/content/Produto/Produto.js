@@ -36,8 +36,6 @@ class Produto extends Component {
   };
 
   handleRateMouseOut = () => {
-    console.log('saiu');
-
     const icon = this.changeRateIcon(this.state.mediaEstrelas);
     this.setState({ iconFaceRate: icon });
   };
@@ -50,19 +48,20 @@ class Produto extends Component {
     return icon;
   };
 
-  handleComprar = (e, id) => {
+  handleComprar = async (e, id) => {
     e.preventDefault();
-    this.props.addProdutoToCart(id);
+    await this.props.addProdutoToCart(id);
     this.props.history.push('/carrinho');
   };
 
   render() {
     const { iconFaceRate } = this.state;
     const { produto, loading } = this.props.produtos;
+    const loadingCarrinho = this.props.carrinho.loading;
 
     return (
       <div style={{ padding: '25px' }}>
-        {loading ? (
+        {loading || loadingCarrinho ? (
           <Spinner />
         ) : (
           <Row>
@@ -133,7 +132,8 @@ class Produto extends Component {
 }
 
 const mapStateToProps = state => ({
-  produtos: state.produtos
+  produtos: state.produtos,
+  carrinho: state.carrinho
 });
 
 export default connect(

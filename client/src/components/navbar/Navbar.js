@@ -39,9 +39,7 @@ class Navbar extends Component {
     const { categorias } = this.props.categorias;
     let myHeaderContent = (
       <MyHeader
-        cartClick={() =>
-          this.handleLinkClick('/carrinho/esse-e-para-ser-meu-carrinhoId')
-        }
+        cartClick={() => this.handleLinkClick('/carrinho')}
         logoClick={() => this.handleLinkClick('/')}
         userClick={() => this.handleLinkClick('/login')}
         clickDrawer={this.handleDrawer}

@@ -40,6 +40,11 @@ export const getCarrinho = () => {
       type: types.GET_CARRINHO,
       payload: JSON.parse(localStorage.getItem('carrinho'))
     };
+  } else {
+    return {
+      type: types.GET_CARRINHO,
+      payload: []
+    };
   }
 };
 

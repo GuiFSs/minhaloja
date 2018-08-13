@@ -1,1 +1,1 @@
-Just playing with ant design MERN. Building an e-commerce.
+Just playing with ant design and MERN stack. Building an e-commerce.

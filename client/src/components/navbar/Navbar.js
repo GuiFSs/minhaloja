@@ -34,11 +34,22 @@ class Navbar extends Component {
     this.props.history.push(link);
   };
 
+  menuItemClick = e => {
+    switch (e.key) {
+      case 'carrinho':
+        this.props.history.push('/carrinho');
+        break;
+      case 'logo':
+        this.props.history.push('/');
+    }
+  };
+
   render() {
     const { width } = this.state;
     const { categorias } = this.props.categorias;
     let myHeaderContent = (
       <MyHeader
+        menuItemClick={this.menuItemClick}
         cartClick={() => this.handleLinkClick('/carrinho')}
         logoClick={() => this.handleLinkClick('/')}
         userClick={() => this.handleLinkClick('/login')}

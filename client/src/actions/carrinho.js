@@ -34,18 +34,20 @@ export const addProdutoToCart = produtoId => async dispatch => {
   }
 };
 
-export const getCarrinho = () => {
+export const getCarrinho = () => dispatch => {
+  dispatch(setCartLoading(true));
   if (localStorage.getItem('carrinho')) {
-    return {
+    dispatch({
       type: types.GET_CARRINHO,
       payload: JSON.parse(localStorage.getItem('carrinho'))
-    };
+    });
   } else {
-    return {
+    dispatch({
       type: types.GET_CARRINHO,
       payload: []
-    };
+    });
   }
+  dispatch(setCartLoading(false));
 };
 
 export const removeProdutoFromCart = produtoId => async dispatch => {

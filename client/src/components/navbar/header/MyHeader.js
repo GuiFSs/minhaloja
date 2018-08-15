@@ -9,7 +9,7 @@ const { Search } = Input;
 const { Header } = Layout;
 
 const MyHeader = props => {
-  const { width, clickDrawer, userClick, logoClick, cartClick } = props;
+  const { width, menuItemClick } = props;
 
   const style = { background: 'none', marginRight: '-10px' };
   let headerStyle = {};
@@ -28,7 +28,7 @@ const MyHeader = props => {
   );
 
   const shoppingItem = (
-    <Menu.Item onClick={cartClick} style={style} key="3">
+    <Menu.Item style={style} key="carrinho">
       <Badge count={2}>
         <Icon
           type="shopping-cart"
@@ -38,7 +38,7 @@ const MyHeader = props => {
     </Menu.Item>
   );
   const userItem = (
-    <Menu.Item onClick={userClick} style={style} key="2">
+    <Menu.Item style={style} key="user">
       <Icon type="user" style={{ fontSize: '20px' }} />
     </Menu.Item>
   );
@@ -46,21 +46,21 @@ const MyHeader = props => {
   return (
     <Header style={headerStyle} className="header">
       <Menu
+        onClick={menuItemClick}
         theme="dark"
         mode="horizontal"
         defaultSelectedKeys={['2']}
         style={{ lineHeight: '44px' }}
       >
-        <Menu.Item onClick={clickDrawer} style={style} key="1">
+        <Menu.Item style={style} key="sidebar">
           {porDepartamento}
         </Menu.Item>
-        <Menu.Item style={style} onClick={logoClick}>
+        <Menu.Item style={style} key="logo">
           Minha Logo
         </Menu.Item>
-
         {width <= 670 ? userItem : null}
         {width <= 670 ? shoppingItem : null}
-        <Menu.Item className="search-item" style={{ ...style }} key="4">
+        <Menu.Item className="search-item" style={{ ...style }} key="search">
           <Search
             placeholder="ex: notebooks, celulares"
             onSearch={value => console.log(value)}

@@ -1,28 +1,73 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Card, Row, Col, Input, Button, Select } from 'antd';
+import { Card, Row, Col, Input, Button, InputNumber } from 'antd';
 // import PropTypes from 'prop-types'
-import { getCarrinho } from '../../actions/carrinho';
+import { getCarrinho, removeProdutoFromCart } from '../../actions/carrinho';
 import Spinner from '../layout/Spinner';
-import { formatPreco } from '../../utils/format';
+import { formatPreco, formatParcela } from '../../utils/format';
 
-const { Option } = Select;
 class Carrinho extends Component {
   state = {
-    mostrarOpcoesFrete: false
+    mostrarOpcoesFrete: false,
+    produtosPreco: {},
+    valorTotal: 0
   };
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    let { produtosPreco, valorTotal } = prevState;
+    nextProps.carrinho.produtos.map(produto => {
+      if (!prevState.produtosPreco[produto._id]) {
+        valorTotal += produto.preco;
+        produtosPreco[produto._id] = produto.preco;
+      }
+    });
+    return Object.keys(produtosPreco).length > 0
+      ? { produtosPreco, valorTotal }
+      : { ...prevState };
+  }
 
   componentDidMount() {
     this.props.getCarrinho();
   }
+  atualizarValorTotal = () => {
+    const produtosPreco = {};
+    let valorTotal = 0;
+    this.props.carrinho.produtos.map(produto => {
+      valorTotal += produto.preco;
+      return (produtosPreco[produto._id] = produto.preco);
+    });
+    this.setState({ produtosPreco, valorTotal });
+  };
 
   handleCalcularFrete = value => {
-    console.log(value);
     this.setState({ mostrarOpcoesFrete: true });
   };
 
+  handleRemoveProduto = async id => {
+    await this.props.removeProdutoFromCart(id);
+    this.props.getCarrinho();
+    this.atualizarValorTotal();
+  };
+
+  handleProdutoQtdeChange = (qtde, id, precoProduto) => {
+    this.setState(prevState => {
+      const produtosPreco = {
+        ...prevState.produtosPreco,
+        [id]: qtde * precoProduto
+      };
+      let valorTotal = 0;
+      for (let produto in produtosPreco) {
+        valorTotal += produtosPreco[produto];
+      }
+      return {
+        produtosPreco,
+        valorTotal
+      };
+    });
+  };
+
   render() {
-    const { mostrarOpcoesFrete } = this.state;
+    const { mostrarOpcoesFrete, produtosPreco, valorTotal } = this.state;
     const { produtos, loading } = this.props.carrinho;
     return (
       <div>
@@ -51,9 +96,11 @@ class Carrinho extends Component {
                 ) : null}
               </Col>
             </Row>
-            <Row>
-              <Col sm={18}>Produto</Col>
-            </Row>
+            {/* <Row>
+              <Col xs={{ offset: 1, span: 5 }}>Produto</Col>
+              <Col xs={5}>Quantidade</Col>
+              <Col xs={{ span: 5 }}>Preco</Col>
+            </Row> */}
             <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32, xl: 40 }}>
               <Col style={{ padding: '-10px' }} sm={24} lg={16}>
                 {produtos.map(produto => (
@@ -61,36 +108,46 @@ class Carrinho extends Component {
                     <Col>
                       <Card>
                         <Row>
-                          <Col xs={5}>
+                          <Col xs={4}>
                             <img
                               style={{ width: '100%' }}
                               src={produto.imagens ? produto.imagens[0] : ''}
                               alt={produto.nome}
                             />
                           </Col>
-                          <Col
-                            xs={{ offset: 2, span: 4 }}
-                            sm={{ offset: 1, span: 3 }}
-                          >
-                            <Select
-                              // value={state.currency}
-                              // size={size}
-                              style={{ width: '100%' }}
-                              // onChange={this.handleCurrencyChange}
+                          <Col xs={{ span: 5 }} sm={{ offset: 1, span: 4 }}>
+                            <InputNumber
+                              min={1}
+                              max={6}
+                              defaultValue={1}
+                              onChange={qtde =>
+                                this.handleProdutoQtdeChange(
+                                  qtde,
+                                  produto._id,
+                                  produto.preco
+                                )
+                              }
+                            />
+                            <span
+                              onClick={() =>
+                                this.handleRemoveProduto(produto._id)
+                              }
+                              className="remover-produto-carrinho"
+                              style={{}}
                             >
-                              <Option value="1">1</Option>
-                              <Option value="2">2</Option>
-                              <Option value="3">3</Option>
-                              <Option value="4">4</Option>
-                              <Option value="5">5</Option>
-                              <Option value="6">6</Option>
-                            </Select>
+                              remover
+                            </span>
                           </Col>
                           <Col
-                            xs={{ offset: 2, span: 11 }}
+                            xs={{ offset: 4, span: 11 }}
                             sm={{ offset: 1, span: 4 }}
                           >
-                            <p>R$ {formatPreco(produto.preco)}</p>
+                            <p>
+                              R${' '}
+                              {produtosPreco[produto._id]
+                                ? formatPreco(produtosPreco[produto._id])
+                                : produto.preco}
+                            </p>
                           </Col>
                           <Col xs={24} sm={{ span: 10 }}>
                             <p>{produto.nome}</p>
@@ -111,11 +168,14 @@ class Carrinho extends Component {
                 sm={24}
                 lg={8}
               >
-                <h1>Resumo do pedido</h1>
-                <h2>Total: R$ 1835,55</h2>
-                <Button style={{ width: '100%' }} type="primary">
-                  Continuar
-                </Button>
+                <div style={{ textAlign: 'center' }}>
+                  <h1>Resumo do pedido</h1>
+                  <h2>R$ {formatPreco(valorTotal)}</h2>
+                  <p>{valorTotal > 0 && formatParcela(valorTotal, 8)}</p>
+                  <Button style={{ width: '100%' }} type="primary">
+                    Continuar
+                  </Button>
+                </div>
               </Col>
             </Row>
           </div>
@@ -141,5 +201,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getCarrinho }
+  { getCarrinho, removeProdutoFromCart }
 )(Carrinho);

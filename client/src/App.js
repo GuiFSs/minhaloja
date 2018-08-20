@@ -12,6 +12,7 @@ import Carrinho from './components/carrinho/Carrinho';
 import jwt_decode from 'jwt-decode';
 import store from './store';
 import { setUsuarioAtual } from './actions/autenticacao';
+import Pagamento from './components/pagamento/Pagamento';
 
 class App extends Component {
   componentDidMount() {
@@ -34,6 +35,7 @@ class App extends Component {
         <Route exact path="/carrinho" component={Carrinho} />
         <Route exact path="/" component={MyContent} />
         <Route exact path="/login" component={Login} />
+        <Route exact path="/pagamento" component={Pagamento} />
         <Route exact path="/cadastro" component={Cadastro} />
         <Route path="/" component={MyFooter} />
       </div>

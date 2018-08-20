@@ -76,7 +76,7 @@ const MyHeader = props => {
 
 MyHeader.propTypes = {
   width: PropTypes.number.isRequired,
-  clickDrawer: PropTypes.func.isRequired
+  menuItemClick: PropTypes.func.isRequired
 };
 
 export default MyHeader;

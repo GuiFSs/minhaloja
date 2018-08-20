@@ -34,13 +34,19 @@ class Navbar extends Component {
     this.props.history.push(link);
   };
 
-  menuItemClick = e => {
+  handleMenuItemClick = e => {
     switch (e.key) {
       case 'carrinho':
         this.props.history.push('/carrinho');
         break;
       case 'logo':
         this.props.history.push('/');
+        break;
+      case 'sidebar':
+        this.handleDrawer();
+        break;
+      default:
+        break;
     }
   };
 
@@ -49,7 +55,7 @@ class Navbar extends Component {
     const { categorias } = this.props.categorias;
     let myHeaderContent = (
       <MyHeader
-        menuItemClick={this.menuItemClick}
+        menuItemClick={this.handleMenuItemClick}
         cartClick={() => this.handleLinkClick('/carrinho')}
         logoClick={() => this.handleLinkClick('/')}
         userClick={() => this.handleLinkClick('/login')}
@@ -60,13 +66,7 @@ class Navbar extends Component {
     myHeaderContent =
       width >= 1025 ? (
         <Affix offsetTop={0}>
-          <MyHeader
-            cartClick={this.handleCartClick}
-            logoClick={this.handleLogoClick}
-            userClick={this.handleUserClick}
-            clickDrawer={this.handleDrawer}
-            width={width}
-          />
+          <MyHeader menuItemClick={this.handleMenuItemClick} width={width} />
         </Affix>
       ) : (
         myHeaderContent

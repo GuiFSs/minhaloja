@@ -20,6 +20,7 @@ class Carrinho extends Component {
         valorTotal += produto.preco;
         produtosPreco[produto._id] = produto.preco;
       }
+      return produto;
     });
     return Object.keys(produtosPreco).length > 0
       ? { produtosPreco, valorTotal }
@@ -64,6 +65,10 @@ class Carrinho extends Component {
         valorTotal
       };
     });
+  };
+
+  handleContinuar = () => {
+    this.props.history.push('/pagamento');
   };
 
   render() {
@@ -172,7 +177,11 @@ class Carrinho extends Component {
                   <h1>Resumo do pedido</h1>
                   <h2>R$ {formatPreco(valorTotal)}</h2>
                   <p>{valorTotal > 0 && formatParcela(valorTotal, 8)}</p>
-                  <Button style={{ width: '100%' }} type="primary">
+                  <Button
+                    onClick={this.handleContinuar}
+                    style={{ width: '100%' }}
+                    type="primary"
+                  >
                     Continuar
                   </Button>
                 </div>

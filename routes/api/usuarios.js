@@ -23,18 +23,22 @@ router.post('/cadastro', async (req, res) => {
   }
 
   try {
-    const usuario = await Usuario.findOne({ email: req.body.email });
+    const usuario = await Usuario.findOne({ email: req.body.email }).exec();
     if (usuario) {
       errors.email = 'Esse email já existe';
       return res.status(400).json(errors);
     }
     const newUsuario = new Usuario({ ...req.body });
 
-    const salt = await bcrypt.genSalt(10);
-    newUsuario.senha = await bcrypt.hash(newUsuario.senha, salt);
-    await newUsuario.save();
-    newUsuario.senha = '';
-    res.status(201).json(newUsuario);
+    try {
+      const salt = await bcrypt.genSalt(10);
+      newUsuario.senha = await bcrypt.hash(newUsuario.senha, salt);
+      await newUsuario.save();
+      // newUsuario.senha = '';
+      res.status(201).json(newUsuario);
+    } catch (err) {
+      res.status(400).json({ err });
+    }
   } catch (err) {
     res.status(400).json(err);
   }
@@ -52,8 +56,7 @@ router.post('/login', async (req, res) => {
   }
   const { email, senha } = req.body;
   try {
-    const usuario = await Usuario.findOne({ email });
-
+    const usuario = await Usuario.findOne({ email }).exec();
     if (!usuario) {
       errors.email = 'Email ou senha incorretos';
       errors.senha = 'Email ou senha incorretos';
@@ -66,7 +69,7 @@ router.post('/login', async (req, res) => {
       errors.senha = 'Email ou senha incorretos';
       return res.status(400).json(errors);
     }
-    const payload = { id: usuario.id, nome: usuario.nome };
+    const payload = { id: usuario._id, nome: usuario.email };
     jwt.sign(payload, keys.secrectOrKey, { expiresIn: 3600 }, (err, token) => {
       res.json({ success: true, token: 'Bearer ' + token });
     });
@@ -80,12 +83,19 @@ router.post('/login', async (req, res) => {
  * @description Get current user
  * @acesso Private
  */
+// router.get(
+//   '/atual',
+//   passport.authenticate('jwt', { session: false }),
+//   (req, res) => {
+//     const { _id, nome, email } = req.user;
+//     res.json({ _id, nome, email });
+//   }
+// );
 router.get(
   '/atual',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    const { carrinho, _id, nome, email } = req.user;
-    res.json({ carrinho, _id, nome, email });
+    res.json({ id: req.user.id, nome: req.user.nome, email: req.user.email });
   }
 );
 module.exports = router;

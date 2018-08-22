@@ -1,4 +1,5 @@
-.remover-produto-carrinho:hover {
+.remover-produto-carrinho:hover,
+.vizualizar-produtos {
   text-decoration: underline;
   cursor: pointer;
 }

@@ -1,7 +1,8 @@
 import types from '../actions/types';
 const initialState = {
   produtos: [],
-  valorTotal: 0
+  valorTotal: 0,
+  loading: false
 };
 
 const pagamentoReducer = (state = initialState, action) => {
@@ -10,6 +11,11 @@ const pagamentoReducer = (state = initialState, action) => {
       return {
         ...state,
         ...action.payload
+      };
+    case types.SET_PAGAMENTO_LOADING:
+      return {
+        ...state,
+        loading: action.payload
       };
     default:
       return state;

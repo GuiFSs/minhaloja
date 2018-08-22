@@ -11,17 +11,25 @@ import Carrinho from './components/carrinho/Carrinho';
 
 import jwt_decode from 'jwt-decode';
 import store from './store';
-import { setUsuarioAtual } from './actions/autenticacao';
+import { setUsuarioAtual, logoutUsuario } from './actions/autenticacao';
 import Pagamento from './components/pagamento/Pagamento';
+import setAuthToken from './utils/setAuthToken';
+
+const jwtToken = localStorage.getItem('jwtToken') || null;
+
+if (jwtToken) {
+  setAuthToken(jwtToken);
+  const decoded = jwt_decode(jwtToken);
+  store.dispatch(setUsuarioAtual(decoded));
+
+  const currentTime = Date.now() / 1000;
+  if (decoded.exp < currentTime) {
+    store.dispatch(logoutUsuario());
+    window.location.href = '/';
+  }
+}
 
 class App extends Component {
-  componentDidMount() {
-    if (localStorage.getItem('jwtToken')) {
-      const token = localStorage.getItem('jwtToken');
-      const decoded = jwt_decode(token);
-      store.dispatch(setUsuarioAtual(decoded));
-    }
-  }
   render() {
     return (
       <div className="App">

@@ -7,15 +7,16 @@ const Produto = require('../../models/Produto');
 
 router.post(
   '/',
-  // passport.authenticate('jwt', { session: false }),
+  passport.authenticate('jwt', { session: false }),
   async (req, res) => {
     const { produtos } = req.body.carrinho;
+
     const pagamento = {
       produtos: [],
       valorTotal: 0
     };
-    const produtosIds = produtos.map(produto => produto._id);
     try {
+      const produtosIds = produtos.map(produto => produto._id);
       const response = await Produto.find({
         _id: { $in: produtosIds }
       });

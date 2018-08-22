@@ -2,7 +2,7 @@ import types from './types';
 import axios from 'axios';
 
 export const setPagamento = () => async dispatch => {
-  setPagamentoLoading(true);
+  dispatch(setPagamentoLoading(true));
   try {
     // when format the carrinho object, change this
     const data = {

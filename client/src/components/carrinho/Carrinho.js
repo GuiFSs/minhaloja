@@ -74,6 +74,8 @@ class Carrinho extends Component {
   render() {
     const { mostrarOpcoesFrete, produtosPreco, valorTotal } = this.state;
     const { produtos, loading } = this.props.carrinho;
+    console.log(JSON.stringify(produtos));
+
     return (
       <div>
         {loading ? (

@@ -11,7 +11,8 @@ export const getAllCategorias = () => async dispatch => {
   } catch (err) {
     dispatch({
       type: types.GET_ALL_CATEGORIAS,
-      payload: err.response.data
+      // payload: err.response.data
+      payload: []
     });
   }
 };

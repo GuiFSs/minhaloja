@@ -6,7 +6,11 @@ import jwt_decode from 'jwt-decode';
 export const cadastrarUsuario = (user, history) => async dispatch => {
   dispatch(setUsuarioLoading(true));
   try {
-    await axios.post('/api/usuarios/cadastro', user);
+    const response = await axios.post('/api/usuarios/cadastro', user);
+    console.log(
+      'action autenticacao - response.data de cadastro',
+      response.data
+    );
     loginUsuario(user, history);
   } catch (err) {
     dispatch(setUsuarioLoading(false));
@@ -25,6 +29,7 @@ export const loginUsuario = (user, history) => async dispatch => {
     localStorage.setItem('jwtToken', token);
     setAuthToken(token);
     const decoded = jwt_decode(token);
+    console.log('from loginUsuario action', decoded);
     dispatch(setUsuarioAtual(decoded));
     history.goBack();
   } catch (err) {
@@ -33,6 +38,17 @@ export const loginUsuario = (user, history) => async dispatch => {
       type: types.SET_ERRORS,
       payload: err.response.data
     });
+  }
+};
+
+export const getUsuarioAtualInfo = () => async dispatch => {
+  try {
+    const response = await axios.get('/api/usuarios/atual');
+    console.log(response.data);
+
+    setUsuarioAtual(response.data);
+  } catch (err) {
+    setUsuarioAtual({});
   }
 };
 

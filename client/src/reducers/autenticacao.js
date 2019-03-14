@@ -13,7 +13,10 @@ const autenticacaoReducer = (state = initialState, action) => {
       return {
         ...state,
         loading: false,
-        usuario: action.payload,
+        usuario: {
+          ...state.usuario,
+          ...action.payload
+        },
         isAutenticado: !isEmpty(action.payload)
       };
 

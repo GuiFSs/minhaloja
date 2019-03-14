@@ -10,10 +10,6 @@ import myModal from '../../layout/myModal';
 import { setErrors } from '../../../actions/errors';
 
 class Login extends Component {
-  state = {
-    email: ''
-  };
-
   componentDidUpdate() {
     const { errors } = this.props;
     if (Object.keys(errors).length > 0) {

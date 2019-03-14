@@ -69,7 +69,7 @@ router.post('/login', async (req, res) => {
       errors.senha = 'Email ou senha incorretos';
       return res.status(400).json(errors);
     }
-    const payload = { id: usuario._id, nome: usuario.email };
+    const payload = { id: usuario._id, email: usuario.email };
     jwt.sign(payload, keys.secrectOrKey, { expiresIn: 3600 }, (err, token) => {
       res.json({ success: true, token: 'Bearer ' + token });
     });
@@ -78,24 +78,34 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// /**
+//  * @route PUT api/usuarios/update
+//  * @description Update current user
+//  * @acesso Private
+//  */
+// router.put(
+//   '/update',
+//   passport.authenticate('jwt', { session: false }),
+//   async (req, res) => {}
+// );
+
 /**
  * @route GET api/usuarios/atual
  * @description Get current user
  * @acesso Private
  */
-// router.get(
-//   '/atual',
-//   passport.authenticate('jwt', { session: false }),
-//   (req, res) => {
-//     const { _id, nome, email } = req.user;
-//     res.json({ _id, nome, email });
-//   }
-// );
 router.get(
   '/atual',
   passport.authenticate('jwt', { session: false }),
-  (req, res) => {
-    res.json({ id: req.user.id, nome: req.user.nome, email: req.user.email });
+  async (req, res) => {
+    try {
+      const usuario = await Usuario.findById(req.user.id).populate(
+        '-_id -senha'
+      );
+      usuario.res.status(200).json(usuario);
+    } catch (err) {
+      res.status(404).json({ err });
+    }
   }
 );
 module.exports = router;

@@ -2,7 +2,9 @@ import types from '../actions/types';
 const initialState = {
   produtos: [],
   valorTotal: 0,
-  loading: false
+  loading: false,
+  frete: {},
+  freteLoading: false
 };
 
 const pagamentoReducer = (state = initialState, action) => {
@@ -16,6 +18,16 @@ const pagamentoReducer = (state = initialState, action) => {
       return {
         ...state,
         loading: action.payload
+      };
+    case types.SET_FRETE_LOADING:
+      return {
+        ...state,
+        freteLoading: action.payload
+      };
+    case types.GET_FRETE:
+      return {
+        ...state,
+        frete: action.payload
       };
     default:
       return state;

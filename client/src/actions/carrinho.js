@@ -36,10 +36,11 @@ export const addProdutoToCart = produtoId => async dispatch => {
 
 export const getCarrinho = () => dispatch => {
   dispatch(setCartLoading(true));
-  if (localStorage.getItem('carrinho')) {
+  const carrinho = localStorage.getItem('carrinho');
+  if (carrinho) {
     dispatch({
       type: types.GET_CARRINHO,
-      payload: JSON.parse(localStorage.getItem('carrinho'))
+      payload: JSON.parse(carrinho)
     });
   } else {
     dispatch({

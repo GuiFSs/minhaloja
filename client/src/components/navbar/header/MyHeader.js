@@ -11,58 +11,58 @@ const { Header } = Layout;
 const MyHeader = props => {
   const { width, menuItemClick } = props;
 
-  const style = { background: 'none', marginRight: '-10px' };
+  const style = { menuItem: { background: 'none', marginRight: '-10px' } };
   let headerStyle = {};
   headerStyle = width <= 670 ? { height: '100px' } : { height: '60px' };
 
   const porDepartamento = (
     <div>
       {width < 970 ? (
-        <Icon type="menu-fold" />
+        <Icon type='menu-fold' />
       ) : (
         <span>
-          <Icon type="menu-fold" /> Compre por Departamento
+          <Icon type='menu-fold' /> Compre por Departamento
         </span>
       )}
     </div>
   );
 
   const shoppingItem = (
-    <Menu.Item style={style} key="carrinho">
+    <Menu.Item style={style.menuItem} key='carrinho'>
       <Badge count={2}>
         <Icon
-          type="shopping-cart"
+          type='shopping-cart'
           style={{ fontSize: '20px', color: '#fff' }}
         />
       </Badge>
     </Menu.Item>
   );
   const userItem = (
-    <Menu.Item style={style} key="user">
-      <Icon type="user" style={{ fontSize: '20px' }} />
+    <Menu.Item style={style.menuItem} key='user'>
+      <Icon type='user' style={{ fontSize: '20px' }} />
     </Menu.Item>
   );
 
   return (
-    <Header style={headerStyle} className="header">
+    <Header style={headerStyle} className='header'>
       <Menu
         onClick={menuItemClick}
-        theme="dark"
-        mode="horizontal"
+        theme='dark'
+        mode='horizontal'
         defaultSelectedKeys={['2']}
         style={{ lineHeight: '44px' }}
       >
-        <Menu.Item style={style} key="sidebar">
+        <Menu.Item style={style.menuItem} key='sidebar'>
           {porDepartamento}
         </Menu.Item>
-        <Menu.Item style={style} key="logo">
-          Minha Logo
+        <Menu.Item style={style.menuItem} key='logo'>
+          MINHA LOGO
         </Menu.Item>
         {width <= 670 ? userItem : null}
         {width <= 670 ? shoppingItem : null}
-        <Menu.Item className="search-item" style={{ ...style }} key="search">
+        <Menu.Item className='search-item' style={style.menuItem} key='search'>
           <Search
-            placeholder="ex: notebooks, celulares"
+            placeholder='ex: notebooks, celulares'
             onSearch={value => console.log(value)}
             style={{ width: '100%' }}
           />

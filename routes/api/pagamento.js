@@ -50,7 +50,7 @@ router.get('/frete/:cep', async (req, res) => {
       endereco['estado'] = state;
 
       const freteOptions = {
-        opt1: 9.99,
+        opt1: 7.99,
         opt2: 54.99,
         opt3: 1.99
       };

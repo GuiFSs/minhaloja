@@ -17,35 +17,39 @@ import setAuthToken from './utils/setAuthToken';
 
 const jwtToken = localStorage.getItem('jwtToken') || null;
 
-if (jwtToken) {
-  setAuthToken(jwtToken);
-  const decoded = jwt_decode(jwtToken);
-  store.dispatch(setUsuarioAtual(decoded));
-
-  const currentTime = Date.now() / 1000;
-  if (decoded.exp < currentTime) {
-    store.dispatch(logoutUsuario());
-    window.location.href = '/';
+const jwtStuff = async () => {
+  if (jwtToken) {
+    setAuthToken(jwtToken);
+    const decoded = jwt_decode(jwtToken);
+    await store.dispatch(setUsuarioAtual(decoded));
+    // await getUsuarioAtualInfo();
+    const currentTime = Date.now() / 1000;
+    if (decoded.exp < currentTime) {
+      store.dispatch(logoutUsuario());
+      window.location.href = '/';
+    }
   }
-}
+};
+
+jwtStuff();
 
 class App extends Component {
   render() {
     return (
-      <div className="App">
-        <Route path="/" component={Navbar} />
+      <div className='App'>
+        <Route path='/' component={Navbar} />
         <Route
           exact
-          path="/produto/:produtoId/:produtoNome"
+          path='/produto/:produtoId/:produtoNome'
           component={Produto}
         />
-        <Route exact path="/categoria/:nome" component={MyContent} />
-        <Route exact path="/carrinho" component={Carrinho} />
-        <Route exact path="/" component={MyContent} />
-        <Route exact path="/login" component={Login} />
-        <Route exact path="/pagamento" component={Pagamento} />
-        <Route exact path="/cadastro" component={Cadastro} />
-        <Route path="/" component={MyFooter} />
+        <Route exact path='/categoria/:nome' component={MyContent} />
+        <Route exact path='/carrinho' component={Carrinho} />
+        <Route exact path='/' component={MyContent} />
+        <Route exact path='/login' component={Login} />
+        <Route exact path='/pagamento' component={Pagamento} />
+        <Route exact path='/cadastro' component={Cadastro} />
+        <Route path='/' component={MyFooter} />
       </div>
     );
   }

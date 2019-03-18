@@ -8,6 +8,8 @@ import Spinner from '../layout/Spinner';
 class Pagamento extends Component {
   async componentDidMount() {
     if (!this.props.autenticacao.isAutenticado) {
+      console.log(this.props.autenticacao);
+
       this.props.history.push('/login');
       return;
     }

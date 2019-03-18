@@ -29,7 +29,6 @@ export const loginUsuario = (user, history) => async dispatch => {
     localStorage.setItem('jwtToken', token);
     setAuthToken(token);
     const decoded = jwt_decode(token);
-    console.log('from loginUsuario action', decoded);
     dispatch(setUsuarioAtual(decoded));
     history.goBack();
   } catch (err) {
@@ -41,14 +40,24 @@ export const loginUsuario = (user, history) => async dispatch => {
   }
 };
 
+export const updateUsuario = data => async dispatch => {
+  dispatch(setUsuarioLoading(true));
+  try {
+    const response = await axios.put('/api/usuarios/update', data);
+    dispatch(setUsuarioAtual(response.data.user));
+  } catch (err) {
+    dispatch(setUsuarioAtual({}));
+  }
+  dispatch(setUsuarioLoading(false));
+};
+
 export const getUsuarioAtualInfo = () => async dispatch => {
   try {
+    // TODO: fix this
     const response = await axios.get('/api/usuarios/atual');
-    console.log(response.data);
-
-    setUsuarioAtual(response.data);
+    dispatch(setUsuarioAtual(response.data));
   } catch (err) {
-    setUsuarioAtual({});
+    dispatch(setUsuarioAtual({}));
   }
 };
 

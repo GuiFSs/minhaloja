@@ -1,20 +1,23 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Card, Row, Col, Input, Button, InputNumber, Radio } from 'antd';
+import { Card, Row, Col, Input, Button, InputNumber, Radio, Modal } from 'antd';
+
 import RadioGroup from 'antd/lib/radio/group';
 import Spinner from '../layout/Spinner';
 
-import { getUsuarioAtualInfo } from '../../actions/autenticacao';
+import { getUsuarioAtualInfo, updateUsuario } from '../../actions/autenticacao';
 import { getCarrinho, removeProdutoFromCart } from '../../actions/carrinho';
 import { formatPreco, formatParcela } from '../../utils/format';
 import { getFrete } from '../../actions/pagamento';
 
+const confirm = Modal.confirm;
 class Carrinho extends Component {
   state = {
     mostrarOpcoesFrete: false,
     produtosPreco: {},
     valorTotal: 0,
-    freteOption: 0
+    freteOption: 0,
+    showEnderecoModal: false
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -32,7 +35,7 @@ class Carrinho extends Component {
   }
 
   componentDidMount() {
-    this.props.autenticacao.isAutenticado && this.props.getUsuarioAtualInfo();
+    // this.props.autenticacao.isAutenticado && this.props.getUsuarioAtualInfo();
     this.props.getCarrinho();
   }
   atualizarValorTotal = () => {
@@ -45,10 +48,38 @@ class Carrinho extends Component {
     this.setState({ produtosPreco, valorTotal });
   };
 
-  handleCalcularFreteClick = async value => {
-    //TODO: action method to get frete
+  handleUpdateUsuario = data => {
+    this.props.updateUsuario(data);
+  };
 
-    await this.props.getFrete(value);
+  handleCalcularFreteClick = async value => {
+    try {
+      await this.props.getFrete(value);
+
+      const { usuario } = this.props.autenticacao;
+      if (Object.keys(usuario).length !== 0 && !usuario.endereco) {
+        const { endereco } = this.props.frete;
+        const keys = Object.keys(endereco);
+        let content = '';
+        content += keys.map(k => `${k}: ${endereco[k]}`);
+        content = content.replace(',', '\n');
+
+        const { updateUsuario } = this.props;
+
+        confirm({
+          title: 'Você deseja salvar este endereço no seu cadastro?',
+          content,
+          onOk() {
+            updateUsuario({ endereco });
+          },
+          onCancel() {
+            console.log('cancel');
+          }
+        });
+      }
+    } catch (err) {
+      console.log(err);
+    }
 
     this.onChangeFrete(1);
     this.setState({ mostrarOpcoesFrete: true, freteOption: 1 });
@@ -115,6 +146,9 @@ class Carrinho extends Component {
     const { mostrarOpcoesFrete, produtosPreco, valorTotal } = this.state;
     const { produtos, loading } = this.props.carrinho;
     const { frete } = this.props;
+
+    // console.log(this.props.autenticacao.usuario);
+
     return (
       <div>
         {/* {loading ? (
@@ -269,5 +303,11 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getCarrinho, removeProdutoFromCart, getUsuarioAtualInfo, getFrete }
+  {
+    getCarrinho,
+    removeProdutoFromCart,
+    getUsuarioAtualInfo,
+    getFrete,
+    updateUsuario
+  }
 )(Carrinho);
